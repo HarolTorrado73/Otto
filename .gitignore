@@ -1,0 +1,26 @@
+tmp/
+components/
+managed_components/
+build/
+dist/
+.vscode/
+.devcontainer/
+sdkconfig.old
+sdkconfig
+# Solo usamos ESP32-S3 (otto-robot-pet)
+sdkconfig.defaults.esp32
+sdkconfig.defaults.esp32c3
+sdkconfig.defaults.esp32c5
+sdkconfig.defaults.esp32c6
+sdkconfig.defaults.esp32p4
+dependencies.lock
+.env
+releases/
+main/assets/lang_config.h
+main/mmap_generate_emoji.h
+.DS_Store
+.cache
+*.pyc
+*.bin
+mmap_generate_*.h
+.clangd
