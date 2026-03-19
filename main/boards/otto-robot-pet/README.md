@@ -69,6 +69,10 @@ O manualmente:
 2. `idf.py menuconfig` → Xiaozhi Assistant → Board Type → **Otto Robot Pet (Gato/Perro con cola)**
 3. `idf.py build flash monitor`
 
+## Configuración WiFi
+
+El ESP32-S3 usa **provisioning por hotspot**: al encender crea la red `XiaoZhi_XXXX`. Conéctate con el móvil, entra a `http://192.168.4.1` y configura tu WiFi. Si no funciona, mantén pulsado **BOOT (GPIO 0)** al encender.
+
 ## Solución de problemas
 
 ### Pantalla blanca / no muestra nada
@@ -86,6 +90,11 @@ O manualmente:
 - Comprueba: LRC→GPIO 16, BCLK→GPIO 15, DIN→GPIO 7
 - Vin del MAX98357A: 3.7V de batería o 5V del convertidor
 - Si no quieres usar control por GPIO, en `config.h` pon `audio_spk_sd_pin = GPIO_NUM_NC` y conecta SD del MAX98357A a 3.3V directamente
+
+### No conecta a WiFi
+- Asegúrate de estar en la red `XiaoZhi_XXXX` y acceder a `http://192.168.4.1`
+- Si la red no aparece, mantén BOOT (GPIO 0) pulsado al encender
+- Comprueba que tu WiFi sea 2.4 GHz (el ESP32-S3 no soporta 5 GHz)
 
 ### Solo funciona la cola / otros servos no se mueven
 - **Alimentación**: Los 5 servos deben compartir el **mismo 5V y GND** del convertidor MT3608.
