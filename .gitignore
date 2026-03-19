@@ -24,3 +24,6 @@ main/mmap_generate_emoji.h
 *.bin
 mmap_generate_*.h
 .clangd
+
+# Guía local de commits (no subir al repo)
+COMMITS.md
