@@ -22,6 +22,13 @@ Robot mascota (gato/perro) con servo en la cola, basado en [xiaozhi-esp32](https
 | Servos | 5x MG90S |
 | Alimentación | Batería 3.7V → TC4056 → MT3608 (5V) |
 
+## Requisitos
+
+- **ESP-IDF** v5.4 o superior ([instalación](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/))
+- **Python** 3.8+
+
+Abre **ESP-IDF Command Prompt** (Windows) o terminal con `source $IDF_PATH/export.sh` (Linux/macOS) antes de ejecutar los comandos.
+
 ## Compilación
 
 ```bash

@@ -10,6 +10,8 @@ Este proyecto es un fork adaptado para el **Otto Robot Pet** (robot gato/perro c
 - Python 3.8+
 - Board: ESP32-S3 con 16 MB flash
 
+**Importante:** Ejecuta los comandos desde **ESP-IDF Command Prompt** (Windows) o con `source $IDF_PATH/export.sh` (Linux/macOS).
+
 ### Compilación
 
 ```bash
