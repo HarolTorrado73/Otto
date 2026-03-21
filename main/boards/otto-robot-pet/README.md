@@ -91,6 +91,13 @@ El ESP32-S3 usa **provisioning por hotspot**: al encender crea la red `XiaoZhi_X
 - Vin del MAX98357A: 3.7V de batería o 5V del convertidor
 - Si no quieres usar control por GPIO, en `config.h` pon `audio_spk_sd_pin = GPIO_NUM_NC` y conecta SD del MAX98357A a 3.3V directamente
 
+### Error: assets/lang_config.h: No such file or directory
+- **Causa**: El archivo `lang_config.h` se genera durante el build. Si falla:
+  1. Ejecuta `idf.py fullclean`
+  2. Usa el script: `python scripts/release.py otto-robot-pet` (asegura BOARD_TYPE)
+  3. O genera manualmente: `python scripts/gen_lang.py --language zh-CN --output main/assets/lang_config.h`
+- **Nota**: Si usas `idf.py build` directo, asegúrate de haber ejecutado `idf.py menuconfig` y seleccionado el board + idioma.
+
 ### No conecta a WiFi
 - Asegúrate de estar en la red `XiaoZhi_XXXX` y acceder a `http://192.168.4.1`
 - Si la red no aparece, mantén BOOT (GPIO 0) pulsado al encender
