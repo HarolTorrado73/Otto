@@ -9,6 +9,7 @@
 #include "mcp_server.h"
 #include "assets.h"
 #include "settings.h"
+#include "behavior.h"
 
 #include <cstring>
 #include <esp_log.h>
@@ -18,6 +19,62 @@
 #include <font_awesome.h>
 
 #define TAG "Application"
+
+namespace {
+
+void OttoEmotionCallback(const char* emotion) {
+    if (emotion == nullptr) {
+        return;
+    }
+    auto& app = Application::GetInstance();
+    app.Schedule([emotion_str = std::string(emotion)]() {
+        auto display = Board::GetInstance().GetDisplay();
+        display->SetEmotion(emotion_str.c_str());
+    });
+}
+
+void OttoReactionCallback(const char* reaction) {
+    if (reaction == nullptr) {
+        return;
+    }
+    auto& app = Application::GetInstance();
+    std::string sound;
+    if (strcmp(reaction, "happy") == 0 || strcmp(reaction, "excited") == 0) {
+        sound = std::string(Lang::Sounds::OGG_SUCCESS);
+    } else if (strcmp(reaction, "sad") == 0) {
+        sound = std::string(Lang::Sounds::OGG_EXCLAMATION);
+    } else if (strcmp(reaction, "listening") == 0) {
+        sound = std::string(Lang::Sounds::OGG_POPUP);
+    } else {
+        return;
+    }
+
+    app.Schedule([sound = std::move(sound)]() {
+        Application::GetInstance().PlaySound(sound);
+    });
+}
+
+void InitOttoPetModules() {
+#if CONFIG_IDF_TARGET_ESP32S3
+    const otto_servo_config_t servo_map[OTTO_SERVO_COUNT] = {
+        {.gpio_num = GPIO_NUM_4, .min_angle = 0, .max_angle = 180, .neutral_angle = 90, .invert = false},
+        {.gpio_num = GPIO_NUM_5, .min_angle = 0, .max_angle = 180, .neutral_angle = 90, .invert = true},
+        {.gpio_num = GPIO_NUM_6, .min_angle = 0, .max_angle = 180, .neutral_angle = 90, .invert = false},
+        {.gpio_num = GPIO_NUM_7, .min_angle = 0, .max_angle = 180, .neutral_angle = 90, .invert = true},
+        {.gpio_num = GPIO_NUM_15, .min_angle = 0, .max_angle = 180, .neutral_angle = 90, .invert = false},
+    };
+
+    behavior_set_callbacks(OttoEmotionCallback, OttoReactionCallback);
+    esp_err_t err = behavior_init(servo_map);
+    if (err != ESP_OK) {
+        ESP_LOGW(TAG, "Otto pet module init failed: %s", esp_err_to_name(err));
+        return;
+    }
+    set_state(OTTO_STATE_IDLE);
+#endif
+}
+
+}  // namespace
 
 
 Application::Application() {
@@ -84,6 +141,7 @@ void Application::Initialize() {
         xEventGroupSetBits(event_group_, MAIN_EVENT_VAD_CHANGE);
     };
     audio_service_.SetCallbacks(callbacks);
+    InitOttoPetModules();
 
     // Add state change listeners
     state_machine_.AddStateChangeListener([this](DeviceState old_state, DeviceState new_state) {
@@ -554,13 +612,12 @@ void Application::InitializeProtocol() {
                 Schedule([display, message = std::string(text->valuestring)]() {
                     display->SetChatMessage("user", message.c_str());
                 });
+                otto_on_stt_event();
             }
         } else if (strcmp(type->valuestring, "llm") == 0) {
             auto emotion = cJSON_GetObjectItem(root, "emotion");
             if (cJSON_IsString(emotion)) {
-                Schedule([display, emotion_str = std::string(emotion->valuestring)]() {
-                    display->SetEmotion(emotion_str.c_str());
-                });
+                otto_on_llm_event(emotion->valuestring);
             }
         } else if (strcmp(type->valuestring, "mcp") == 0) {
             auto payload = cJSON_GetObjectItem(root, "payload");

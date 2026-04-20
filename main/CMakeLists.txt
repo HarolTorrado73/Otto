@@ -36,10 +36,13 @@ set(SOURCES "audio/audio_codec.cc"
             "settings.cc"
             "device_state_machine.cc"
             "assets.cc"
+            "otto_pet/servo_control.c"
+            "otto_pet/behavior.c"
+            "otto_pet/emotions.c"
             "main.cc"
             )
 
-set(INCLUDE_DIRS "." "display" "display/lvgl_display" "display/lvgl_display/jpg" "audio" "audio/demuxer" "protocols")
+set(INCLUDE_DIRS "." "display" "display/lvgl_display" "display/lvgl_display/jpg" "audio" "audio/demuxer" "protocols" "otto_pet")
 
 # Add board common files
 list(APPEND SOURCES
@@ -973,6 +976,7 @@ idf_component_register(SRCS ${SOURCES}
                         esp_driver_spi
                         esp_driver_i2c
                         esp_driver_i2s
+                        esp_driver_ledc
                         esp_driver_jpeg
                         esp_driver_ppa
                         esp_app_format
